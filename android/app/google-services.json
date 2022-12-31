@@ -1,0 +1,162 @@
+{
+  "project_info": {
+    "project_number": "371034036967",
+    "project_id": "yahochat-c88bc",
+    "storage_bucket": "yahochat-c88bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371034036967:android:c44aec79052a674eb4e042",
+        "android_client_info": {
+          "package_name": "com.example.ichat_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6OASEE7IlaM3Z-ol80_fHqIQMWBFTVJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "371034036967-dbt9falhq6l5ev4s3p83u0t6b4hfsmbl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.team4.yahochat.yahoChatProject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371034036967:android:40fa85549ca5f43fb4e042",
+        "android_client_info": {
+          "package_name": "com.example.yaho_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6OASEE7IlaM3Z-ol80_fHqIQMWBFTVJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "371034036967-dbt9falhq6l5ev4s3p83u0t6b4hfsmbl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.team4.yahochat.yahoChatProject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371034036967:android:d2c3387318278726b4e042",
+        "android_client_info": {
+          "package_name": "com.goupe4.yahochat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371034036967-2q1q6cjtbn7g0fj63cqtb0jce4lct3hs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.goupe4.yahochat",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6OASEE7IlaM3Z-ol80_fHqIQMWBFTVJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "371034036967-dbt9falhq6l5ev4s3p83u0t6b4hfsmbl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.team4.yahochat.yahoChatProject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:371034036967:android:ece2088d6d4d5f07b4e042",
+        "android_client_info": {
+          "package_name": "com.team4.yahochat.yaho_chat_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6OASEE7IlaM3Z-ol80_fHqIQMWBFTVJc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "371034036967-dm4r2i2d89l820q0a0tqvk4uop4bf9fm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "371034036967-dbt9falhq6l5ev4s3p83u0t6b4hfsmbl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.team4.yahochat.yahoChatProject"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
