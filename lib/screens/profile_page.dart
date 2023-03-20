@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:country_code_picker/country_code_picker.dart';
+//import 'package:country_code_picker/country_code_picker.dart';
+import 'package:country_picker/country_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -148,6 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return
         Scaffold(
           appBar: AppBar(
+            backgroundColor: Color(0xff40513B),
             title: const Text(
               AppConstants.profileTitle,
             ),
@@ -247,17 +249,13 @@ class _ProfilePageState extends State<ProfilePage> {
                               border: Border.all(color: Colors.black, width: 1.5),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: CountryCodePicker(
-                              onChanged: (country) {
-                                setState(() {
-                                  dialCodeDigits = country.dialCode!;
-                                });
+                            /*child: showCountryPicker(
+                              context: context,
+                              showPhoneCode: true, // optional. Shows phone code before the country name.
+                              onSelect: (Country country) {
+                                print('Select country: ${country.displayName}');
                               },
-                              initialSelection: 'IN',
-                              showCountryOnly: false,
-                              showOnlyCountryWhenClosed: false,
-                              favorite: const ["+221", "SN", "+33", "FR"],
-                            ),
+                            ),*/
                           ),
                           vertical15,
                           const Text('Numero de Telephone', style: TextStyle(
@@ -280,7 +278,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
-                      ElevatedButton(onPressed: updateFirestoreData, child:const Padding(
+                      ElevatedButton(onPressed: updateFirestoreData,
+                          child:const Padding(
                         padding:  EdgeInsets.all(8.0),
                         child:  Text('Info mise a jour'),
                       )),

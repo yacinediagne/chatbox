@@ -8,10 +8,12 @@ import 'package:provider/provider.dart';
 import 'package:yaho_project/allConstants/all_constants.dart';
 import 'package:yaho_project/allWidgets/loading_view.dart';
 import 'package:yaho_project/model/chatUser.dart';
+import 'package:yaho_project/model/chat_messages.dart';
 import 'package:yaho_project/providers/home_provider.dart';
 import 'package:yaho_project/screens/chat_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:yaho_project/providers/auth_provider.dart';
+import 'package:yaho_project/providers/chat_provider.dart';
 import 'package:yaho_project/screens/login.dart';
 import 'package:yaho_project/screens/login_page.dart';
 import 'package:yaho_project/screens/profile_page.dart';
@@ -33,10 +35,10 @@ class _HomePageState extends State<HomePage> {
   final int _limitIncrement = 20;
   String _textSearch = "";
   bool isLoading = false;
-
   late AuthProvider authProvider;
   late String currentUserId;
   late HomeProvider homeProvider;
+  late ChatProvider chatProvider;
 
   Debouncer searchDebouncer = Debouncer(milliseconds: 300);
   StreamController<bool> buttonClearController = StreamController<bool>();
@@ -144,6 +146,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     authProvider = context.read<AuthProvider>();
+    chatProvider = context.read<ChatProvider>();
     final firebaseAuth = FirebaseAuth.instance;
     currentUserId = FirebaseAuth.instance.currentUser.toString();
     homeProvider = context.read<HomeProvider>();
@@ -162,6 +165,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            backgroundColor: Color(0xff40513B),
             centerTitle: true,
             title: const Text('YahoChat'),
             actions: [
@@ -298,28 +302,33 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget buildItem(BuildContext context, DocumentSnapshot? documentSnapshot) {
+  void toDiscussion(ChatUser userChat) {
     final firebaseAuth = FirebaseAuth.instance;
+    if (KeyboardUtils.isKeyboardShowing()) {
+    KeyboardUtils.closeKeyboard(context);
+    }
+    Navigator.push(
+    context,
+    MaterialPageRoute(
+    builder: (context) => ChatPage(
+    peerId: userChat.id,
+    peerAvatar: userChat.photoUrl,
+    peerNickname: userChat.displayName,
+    userAvatar: firebaseAuth.currentUser!.photoURL!,
+    )));
+  }
+
+
+
+  Widget buildItem(BuildContext context, DocumentSnapshot? documentSnapshot) {
     if (documentSnapshot != null) {
       ChatUser userChat = ChatUser.fromDocument(documentSnapshot);
       if (userChat.id == currentUserId) {
         return const SizedBox.shrink();
-      } else {
+      }
+      else {
         return TextButton(
-          onPressed: () {
-            if (KeyboardUtils.isKeyboardShowing()) {
-              KeyboardUtils.closeKeyboard(context);
-            }
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ChatPage(
-                      peerId: userChat.id,
-                      peerAvatar: userChat.photoUrl,
-                      peerNickname: userChat.displayName,
-                      userAvatar: firebaseAuth.currentUser!.photoURL!,
-                    )));
-          },
+          onPressed: () => toDiscussion(userChat),
           child: ListTile(
             leading: userChat.photoUrl.isNotEmpty
                 ? ClipRRect(

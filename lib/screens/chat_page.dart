@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:encrypt/encrypt.dart' as cryptocraphie;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,19 +17,19 @@ import 'package:yaho_project/providers/profile_provider.dart';
 import 'package:yaho_project/screens/login.dart';
 import 'package:yaho_project/screens/login_page.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:yaho_project/utilities/crypto.dart' as crypto;
 class ChatPage extends StatefulWidget {
   final String peerId;
   final String peerAvatar;
   final String peerNickname;
   final String userAvatar;
-
   const ChatPage(
       {Key? key,
       required this.peerNickname,
       required this.peerAvatar,
       required this.peerId,
-      required this.userAvatar})
+      required this.userAvatar,
+      })
       : super(key: key);
 
   @override
@@ -55,15 +56,18 @@ class _ChatPageState extends State<ChatPage> {
 
   late ChatProvider chatProvider;
   late AuthProvider authProvider;
+  
 
   @override
   void initState() {
     super.initState();
     chatProvider = context.read<ChatProvider>();
     authProvider = context.read<AuthProvider>();
-
     focusNode.addListener(onFocusChanged);
     scrollController.addListener(_scrollListener);
+    setState(() {
+      seeMsg(widget.peerId);
+    });
     readLocal();
   }
 
@@ -125,7 +129,9 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  Future<bool> onBackPressed() {
+  Future<bool> onBackPressed()
+
+  {
     if (isShowSticker) {
       setState(() {
         isShowSticker = false;
@@ -165,10 +171,11 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void onSendMessage(String content, int type) {
+
     if (content.trim().isNotEmpty) {
       textEditingController.clear();
       chatProvider.sendChatMessage(
-          content, type, groupChatId, currentUserId, widget.peerId);
+         crypto.encryptMessage(content), type, groupChatId, currentUserId, widget.peerId, false);
       scrollController.animateTo(0,
           duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
     } else {
@@ -188,6 +195,22 @@ class _ChatPageState extends State<ChatPage> {
       return false;
     }
   }
+  Future<void> seeMsg(String peerId) async{
+    final query = await FirebaseFirestore.instance
+        .collection(FirestoreConstants.pathMessageCollection)
+        .doc(groupChatId)
+        .collection(groupChatId)
+        .where(FirestoreConstants.idFrom, isEqualTo: widget.peerId)
+        .where(FirestoreConstants.isRead, isEqualTo: false)
+        .get();
+    setState(() {
+      query.docs.forEach((doc) {
+        doc.reference.update({FirestoreConstants.isRead: true});
+      });
+    });
+
+
+  }
 
   // checking if sent message
   bool isMessageSent(int index) {
@@ -199,12 +222,42 @@ class _ChatPageState extends State<ChatPage> {
     } else {
       return false;
     }
+
+
   }
+
+  bool isRead(int index) {
+    /*if (index > 0 &&
+        widget.isRead==true && chatMessages.idFrom ==
+        currentUserId)  {
+      return true;
+    } else {
+      return false;
+    }*/
+    //ChatMessages chatMessages = new ChatMessages.fromDocument(documentSnapshot);
+    //chatMessages.isRead=true;
+    //return chatMessages.isRead;
+    if ((index > 0 &&
+        listMessages[index - 1].get(FirestoreConstants.idFrom) ==
+            currentUserId) )
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+    
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    //seeMsg(listMessages[listMessages.length - 2].get(FirestoreConstants.idFrom));
+    seeMsg(widget.peerId);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xff40513B),
         centerTitle: true,
         title: Text('Discuter avec ${widget.peerNickname}'.trim()),
         actions: [
@@ -266,7 +319,7 @@ class _ChatPageState extends State<ChatPage> {
             decoration:
                 kTextInputDecoration.copyWith(hintText: 'ecrire ici...'),
             onSubmitted: (value) {
-              onSendMessage(textEditingController.text, MessageType.text);
+              onSendMessage( textEditingController.text, MessageType.text);
             },
           )),
           Container(
@@ -290,9 +343,8 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget buildItem(int index, DocumentSnapshot? documentSnapshot) {
     if (documentSnapshot != null) {
-      ChatMessages chatMessages = ChatMessages.fromDocument(documentSnapshot);
+      final ChatMessages chatMessages = ChatMessages.fromDocument(documentSnapshot);
       if (chatMessages.idFrom == currentUserId) {
-        // right side (my message)
         return Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -301,7 +353,7 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 chatMessages.type == MessageType.text
                     ? messageBubble(
-                        chatContent: chatMessages.content,
+                        chatContent:crypto.decryptMessage(chatMessages.content),
                         color: AppColors.spaceLight,
                         textColor: AppColors.white,
                         margin: const EdgeInsets.only(right: Sizes.dimen_10),
@@ -360,22 +412,44 @@ class _ChatPageState extends State<ChatPage> {
                     margin: const EdgeInsets.only(
                         right: Sizes.dimen_50,
                         top: Sizes.dimen_6,
-                        bottom: Sizes.dimen_8),
-                    child: Text(
-                      DateFormat('dd MMM yyyy, hh:mm a').format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                          int.parse(chatMessages.timestamp),
-                        ),
-                      ),
-                      style: const TextStyle(
-                          color: AppColors.lightGrey,
-                          fontSize: Sizes.dimen_12,
-                          fontStyle: FontStyle.italic),
+                        bottom: Sizes.dimen_8,
+
                     ),
+                    child: Row(children: [
+                      Spacer(),
+                      chatMessages.isRead
+                          ? Text("Read" ,
+
+                        style: const TextStyle(
+                            color: AppColors.orangeWeb,
+                            fontSize: Sizes.dimen_12,
+                            fontStyle: FontStyle.italic),)
+                          :Text("Not read" ,
+
+                        style: const TextStyle(
+                            color: AppColors.orangeWeb,
+                            fontSize: Sizes.dimen_12,
+                            fontStyle: FontStyle.italic),),
+
+                      //Text("",
+                        //DateFormat('dd MMM yyyy, hh:mm a').format(
+                          //DateTime.fromMillisecondsSinceEpoch(
+                            //int.parse(chatMessages.timestamp),
+                          //),
+                        //) ,
+
+                        //style: const TextStyle(
+                            //color: AppColors.lightGrey,
+                            //fontSize: Sizes.dimen_12,
+                           // fontStyle: FontStyle.italic),
+                      //)
+    ],)
+
                   )
                 : const SizedBox.shrink(),
           ],
         );
+
       } else {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,6 +512,7 @@ class _ChatPageState extends State<ChatPage> {
                                 imageSrc: chatMessages.content, onTap: () {}),
                           )
                         : const SizedBox.shrink(),
+
               ],
             ),
             isMessageReceived(index)
@@ -446,19 +521,23 @@ class _ChatPageState extends State<ChatPage> {
                         left: Sizes.dimen_50,
                         top: Sizes.dimen_6,
                         bottom: Sizes.dimen_8),
-                    child: Text(
-                      DateFormat('dd MMM yyyy, hh:mm a').format(
-                        DateTime.fromMillisecondsSinceEpoch(
-                          int.parse(chatMessages.timestamp),
-                        ),
-                      ),
+                    child: Text("Received",
+                      //DateFormat('dd MMM yyyy, hh:mm a').format(
+                        //DateTime.fromMillisecondsSinceEpoch(
+                          //int.parse(chatMessages.timestamp),
+                        //),
+                      //) ,
+
                       style: const TextStyle(
-                          color: AppColors.lightGrey,
+                          color: AppColors.orangeWeb,
                           fontSize: Sizes.dimen_12,
                           fontStyle: FontStyle.italic),
-                    ),
-                  )
+                    )
+
+            )
                 : const SizedBox.shrink(),
+
+
           ],
         );
       }

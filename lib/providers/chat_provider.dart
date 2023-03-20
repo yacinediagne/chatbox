@@ -5,6 +5,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yaho_project/allConstants/all_constants.dart';
 import 'package:yaho_project/model/chat_messages.dart';
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+import 'package:yaho_project/utilities/crypto.dart' as crypto;
 
 class ChatProvider {
   final SharedPreferences prefs;
@@ -41,7 +44,7 @@ class ChatProvider {
   }
 
   void sendChatMessage(String content, int type, String groupChatId,
-      String currentUserId, String peerId) {
+      String currentUserId, String peerId,bool isRead) {
     DocumentReference documentReference = firebaseFirestore
         .collection(FirestoreConstants.pathMessageCollection)
         .doc(groupChatId)
@@ -50,9 +53,11 @@ class ChatProvider {
     ChatMessages chatMessages = ChatMessages(
         idFrom: currentUserId,
         idTo: peerId,
+        isRead: isRead,
         timestamp: DateTime.now().millisecondsSinceEpoch.toString(),
         content: content,
-        type: type);
+        type: type,
+    );
 
     FirebaseFirestore.instance.runTransaction((transaction) async {
       transaction.set(documentReference, chatMessages.toJson());
